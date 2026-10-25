@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador Campestre | Fanpage</title>
+  <style>
+    :root {
+      --primary: #2d6a4f;
+      --secondary: #52b788;
+      --accent: #d8f3dc;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #1b4332;
+      --muted: #495057;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 15px; max-width: 500px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 15px; padding: 10px 0; }
+    header h1 { font-size: 1.4rem; color: var(--primary); }
+    header p { font-size: 0.85rem; color: var(--muted); }
+    
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
+    .filter-btn {
+      background: var(--card); border: 1px solid var(--secondary); color: var(--primary);
+      padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; white-space: nowrap;
+    }
+    .filter-btn.active { background: var(--primary); color: white; }
+
+    .card {
+      background: var(--card); border-radius: 16px; padding: 18px; margin-bottom: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e9ecef;
+    }
+    .badge {
+      display: inline-block; background: var(--accent); color: var(--primary);
+      padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; margin-bottom: 10px;
+    }
+    .title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; }
+    .idea-box { background: #f1f8f4; border-left: 4px solid var(--secondary); padding: 10px; border-radius: 4px; font-size: 0.9rem; margin-bottom: 12px; }
+    .copy-preview { background: #fff; border: 1px dashed var(--secondary); padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #333; margin-bottom: 12px; white-space: pre-line; }
+
+    .btn-main {
+      width: 100%; background: var(--primary); color: white; border: none; padding: 14px;
+      border-radius: 12px; font-size: 1rem; font-weight: bold; display: flex; align-items: center;
+      justify-content: center; gap: 8px; box-shadow: 0 4px 8px rgba(45,106,79,0.3);
+    }
+    .btn-copy {
+      width: 100%; background: #e9ecef; color: var(--text); border: none; padding: 10px;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+    }
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #333; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🌿 Creador de Contenido Campestre</h1>
+    <p>Ideas infinitas de humor, campo y naturaleza</p>
+  </header>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setCategoria('todas')">✨ Todo al azar</button>
+    <button class="filter-btn" onclick="setCategoria('humor')">😂 Humor / Skits</button>
+    <button class="filter-btn" onclick="setCategoria('nostalgia')">☕ Café y Nostalgia</button>
+    <button class="filter-btn" onclick="setCategoria('comida')">🍲 Fogón y Cocina</button>
+    <button class="filter-btn" onclick="setCategoria('mascotas')">🐾 Mascotas</button>
+    <button class="filter-btn" onclick="setCategoria('campo')">🍌 Cosecha y Tierra</button>
+  </div>
+
+  <div class="card" id="cardResultado">
+    <span class="badge" id="tipoBadge">Foto de Interacción</span>
+    <div class="title" id="tituloIdea">Cargando idea...</div>
+    <div class="idea-box" id="descripcionIdea">Toca el botón verde abajo para generar una nueva idea.</div>
+    <p style="font-size: 0.75rem; font-weight: bold; color: var(--muted); margin-bottom: 4px;">TEXTO (COPY) SUGERIDO PARA FACEBOOK:</p>
+    <div class="copy-preview" id="copyTexto">...</div>
+    <button class="btn-copy" onclick="copiarTexto()">📋 Copiar Texto para Facebook</button>
+  </div>
+
+  <button class="btn-main" onclick="generarIdea()">
+    🔄 ¡Generar otra idea infinita!
+  </button>
+
+  <div class="toast" id="toast">¡Texto copiado al portapapeles!</div>
+
+  <script>
+    const datos = {
+      acciones: [
+        { c: "humor", t: "Audio viral en pleno oficio", d: "Grabar un reel con audio cómico de fondo mientras tu mamá está barriendo el pasto, lavando platos en el patio o desyerbando.", p: "Cuando crees que vives relajado en el campo pero la jefa tiene otros planes 😂🏡 ¿Quién más tiene una mamá que no puede ver a nadie sentado sin ponerlo a hacer oficio? ¡Los leemos!" },
+        { c: "humor", t: "Diferencia de generaciones", d: "Reel corto: Tú intentando explicarle a tu mamá algo de tecnología o internet mientras ella te responde con un dicho campesino.", p: "Uno queriendo ser moderno y mi mamá sale con una sabiduría que me deja callado 😅 ¿Qué refrán o dicho típico de mamá es el que más recuerdan ustedes?" },
+        { c: "nostalgia", t: "El café recién colado", d: "Foto en primer plano de un jarro o pocillo con café humeante y el patio verde de fondo.", p: "Buenos días familia bendecida ☕🌿 Nada cambia tanto el día como un buen tintico recién hecho con la paz del campo. ¿Quién ya se tomó el primero hoy? ¿Lo toman dulce o amargo?" },
+        { c: "nostalgia", t: "La casa y la tranquilidad", d: "Foto del corredor de la casa, las mecedoras o una hamaca con el sol mañanero.", p: "El verdadero lujo no se mide en lujos, sino en paz y salud 🏡✨ Les mandamos un abrazo gigante desde nuestro rinconcito. ¿Quién cambiaría el estrés de la ciudad por un día de descanso aquí?" },
+        { c: "comida", t: "Olla tradicional en el fogón", d: "Foto simple a una olla hirviendo con arroz, sopa o arepas asándose, sin pose.", p: "El almuerzo ya está listo y hecho con amor de mamá 🍲🔥 Dicen que en el campo la comida rinde más y sabe mejor... ¿Ustedes qué dicen: mito o realidad? ¿Qué almorzaron hoy por allá?" },
+        { c: "comida", t: "Cocinando con ingredientes frescos", d: "Video de 15 segundos de mamá picando cilantro, plátano o cebolla recién bajada de la mata.", p: "De la huerta directa a la mesa 🌿 Aquí nada de conservantes, pura comida de verdad. ¿Qué receta de sus abuelas o mamás es la que más extrañan?" },
+        { c: "mascotas", t: "El guardián consentido", d: "Foto graciosa del perro o gato durmiendo panza arriba en el pasto o haciendo travesuras.", p: "Aquí reportándose el verdadero dueño y patrón de la finca 🐶🐾 Todo el día vigilando que el pasto esté suavecito para la siesta. ¿Tienen mascotas en casa? ¡Dejen su foto en los comentarios para conocerlos!" },
+        { c: "campo", t: "La mata de plátano o frutas", d: "Foto de un racimo verde o frutos colgados en el árbol con el cielo de fondo.", p: "Miren qué hermosura nos regaló la tierra hoy 🍌🌱 El campo es trabajo, pero las bendiciones se recogen con el corazón. ¿En sus países o ciudades cómo le llaman a este fruto?" },
+        { c: "campo", t: "Caminata y sonidos de la naturaleza", d: "Reel de 10-15 segundos caminando por el pasto, solo con el sonido de los pájaros y el viento.", p: "Regálate 15 segundos para respirar y escuchar esto 🍃✨ A veces la mente solo necesita la calma de la naturaleza. Que tengan un día lleno de bendiciones." }
+      ],
+      ganchosExtras: [
+        "¿Quién se acuerda de esto?",
+        "Un saludo especial a todos los que nos ven desde lejos.",
+        "Bendiciones para todos en este hermoso día.",
+        "¿Ustedes qué opinan?",
+        "¡Déjanos un corazón si te gustó!"
+      ]
+    };
+
+    let categoriaActual = 'todas';
+
+    function setCategoria(cat) {
+      categoriaActual = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      generarIdea();
+    }
+
+    function generarIdea() {
+      let lista = categoriaActual === 'todas' 
+        ? datos.acciones 
+        : datos.acciones.filter(item => item.c === categoriaActual);
+
+      if (lista.length === 0) lista = datos.acciones;
+
+      const randomItem = lista[Math.floor(Math.random() * lista.length)];
+      const ganchoExtra = datos.ganchosExtras[Math.floor(Math.random() * datos.ganchosExtras.length)];
+
+      document.getElementById('tipoBadge').innerText = randomItem.c.toUpperCase() + (randomItem.c === 'humor' ? ' (REEL/VIDEO)' : ' (FOTO/INTERACCIÓN)');
+      document.getElementById('tituloIdea').innerText = randomItem.t;
+      document.getElementById('descripcionIdea').innerText = randomItem.d;
+      document.getElementById('copyTexto').innerText = randomItem.p + " " + ganchoExtra;
+    }
+
+    function copiarTexto() {
+      const texto = document.getElementById('copyTexto').innerText;
+      navigator.clipboard.writeText(texto).then(() => {
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2000);
+      });
+    }
+
+    generarIdea();
+  </script>
+</body>
+</html>
